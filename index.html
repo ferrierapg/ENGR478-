@@ -3,40 +3,54 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>STM32 Digital Piano Project</title>
+	<meta name="description" content="ENGR 478 STM32 digital piano project using GPIO, EXTI interrupts, SysTick timing, ADC volume control, and ADC octave control.">
+	<meta name="theme-color" content="#2364aa">
+	<title>STM32 Digital Piano | ENGR 478 Project</title>
+	<link rel="icon" href="assets/site-icon.svg" type="image/svg+xml">
 	<link rel="stylesheet" href="site.css">
 </head>
 <body>
 	<header class="topbar">
-		<a class="brand" href="#home">STM32 Digital Piano</a>
+		<a class="brand" href="#home">
+			<span class="brand-mark" aria-hidden="true"></span>
+			<span>STM32 Digital Piano</span>
+		</a>
 		<nav class="nav">
 			<a href="#hardware">Hardware</a>
 			<a href="#software">Software</a>
+			<a href="#demo">Demo</a>
 			<a href="#results">Results</a>
-			<a href="#code">Code</a>
+			<a href="#documents">Documents</a>
 		</nav>
 	</header>
 
 	<main id="home">
 		<section class="hero">
 			<div class="hero-text">
-				<p class="eyebrow">ENGR 478 Term Project</p>
-				<h1>Four-button digital piano using the STM32 NUCLEO-L476RG</h1>
+				<p class="eyebrow">ENGR 478 Embedded Systems Term Project</p>
+				<h1>Digital piano on the STM32 NUCLEO-L476RG</h1>
 				<p class="lead">
-					This project uses GPIO, EXTI interrupts, SysTick, and ADC to make a small embedded piano.
-					Four push buttons select chords, three speaker outputs play the sound, and two
-					potentiometers control volume and octave.
+					A register-level embedded piano built with four push buttons, three speaker outputs,
+					SysTick sound timing, EXTI button interrupts, and two ADC potentiometer controls.
 				</p>
+				<div class="project-meta" aria-label="Project feature summary">
+					<span>GPIO</span>
+					<span>EXTI</span>
+					<span>SysTick</span>
+					<span>ADC</span>
+					<span>No HAL</span>
+				</div>
 				<div class="hero-actions">
-					<a class="button primary" href="#software">View Flow</a>
-					<a class="button secondary" href="docs/Digital_Piano_Code_Study_Guide.pdf">Study Guide</a>
+					<a class="button primary" href="#software">Explore Software</a>
+					<a class="button secondary" href="docs/Digital_Piano_Code_Study_Guide.pdf">Download Study Guide</a>
 				</div>
 			</div>
 
 			<div class="hero-panel" aria-label="Digital piano signal preview">
+				<p class="panel-label">Real-time signal path</p>
 				<div class="board-title">NUCLEO-L476RG</div>
 				<div class="signal-row">
-					<span>PC0</span>
+					<span>PC0-PC3</span>
 					<div class="signal button-signal"></div>
 				</div>
 				<div class="signal-row">
@@ -52,21 +66,22 @@
 					<div><span>PA6</span><b></b></div>
 					<div><span>PA7</span><b></b></div>
 				</div>
+				<p class="panel-footnote">Buttons select chords. Potentiometers control volume and octave.</p>
 			</div>
 		</section>
 
 		<section class="summary-strip">
 			<div>
 				<strong>4</strong>
-				<span>push buttons</span>
+				<span>button inputs</span>
 			</div>
 			<div>
 				<strong>3</strong>
-				<span>speaker outputs</span>
+				<span>speaker pins</span>
 			</div>
 			<div>
 				<strong>2</strong>
-				<span>ADC knobs</span>
+				<span>ADC controls</span>
 			</div>
 			<div>
 				<strong>20 kHz</strong>
@@ -77,17 +92,18 @@
 		<section id="hardware" class="section">
 			<div class="section-heading">
 				<p class="eyebrow">Hardware Setup</p>
-				<h2>Inputs and outputs used by the piano</h2>
+				<h2>Simple hardware, clear pin responsibilities</h2>
+				<p>The hardware is intentionally small so the software behavior can be measured and explained clearly.</p>
 			</div>
 
 			<div class="hardware-grid">
 				<div class="hardware-card">
 					<h3>Push Buttons</h3>
-					<p>PC0, PC1, PC2, and PC3 are configured as inputs with pull-up resistors. Pressing a button creates an EXTI interrupt.</p>
+					<p>PC0, PC1, PC2, and PC3 are inputs with pull-up resistors. Each press or release creates an EXTI interrupt.</p>
 				</div>
 				<div class="hardware-card">
 					<h3>Speaker Outputs</h3>
-					<p>PA5, PA6, and PA7 are GPIO outputs. The SysTick handler changes these pins to create the sound waveform.</p>
+					<p>PA5, PA6, and PA7 are GPIO outputs. SysTick updates these pins to create the sound waveform.</p>
 				</div>
 				<div class="hardware-card">
 					<h3>Volume Knob</h3>
@@ -123,19 +139,19 @@
 		<section id="software" class="section split-section">
 			<div class="section-text">
 				<p class="eyebrow">Software Flow</p>
-				<h2>How the code runs</h2>
+				<h2>Main logic and interrupts are separated</h2>
 				<p>
-					The program initializes GPIO, SysTick, EXTI, and ADC. After setup, the main loop sleeps
-					with <code>__WFI()</code> and wakes when an interrupt happens. Button interrupts select
-					the active note. The main loop reads the two ADC knobs every 20 ms. SysTick creates the
-					sound timing at 20 kHz.
+					The program initializes GPIO, SysTick, EXTI, and ADC. After setup, the main loop waits
+					with <code>__WFI()</code>. Button changes are handled by EXTI interrupts, while sound
+					timing runs from the SysTick interrupt at 20 kHz.
 				</p>
 				<ul class="check-list">
-					<li>EXTI handles button press and release.</li>
-					<li>ADC reads volume and octave.</li>
-					<li>SysTick creates the speaker waveform.</li>
-					<li>The main loop connects the modules together.</li>
+					<li>Main loop reads ADC values every 20 ms.</li>
+					<li>EXTI interrupt updates the active button state.</li>
+					<li>SysTick interrupt drives PA5, PA6, and PA7.</li>
+					<li>Shared variables connect the modules without using HAL.</li>
 				</ul>
+				<a class="inline-link" href="docs/Software_Flowchart.html">Open full flowchart</a>
 			</div>
 			<div class="image-frame">
 				<img src="assets/Software_Flowchart.svg" alt="Software flowchart for the STM32 digital piano">
@@ -146,6 +162,7 @@
 			<div class="section-heading">
 				<p class="eyebrow">Chord Table</p>
 				<h2>Each button selects a three-note chord</h2>
+				<p>The software maps each button to a chord table, then the SysTick sound engine outputs the selected tones.</p>
 			</div>
 
 			<div class="chord-grid">
@@ -172,6 +189,37 @@
 			</div>
 		</section>
 
+		<section id="demo" class="section">
+			<div class="section-heading">
+				<p class="eyebrow">Demo Plan</p>
+				<h2>What the project demonstrates</h2>
+				<p>The live demo is organized around the main embedded concepts used in the project.</p>
+			</div>
+
+			<div class="demo-grid">
+				<div class="demo-card">
+					<span>01</span>
+					<h3>Button Response</h3>
+					<p>Press each button and show that a different chord is selected.</p>
+				</div>
+				<div class="demo-card">
+					<span>02</span>
+					<h3>Release Behavior</h3>
+					<p>Release the button and show that the sound stops cleanly.</p>
+				</div>
+				<div class="demo-card">
+					<span>03</span>
+					<h3>Volume Control</h3>
+					<p>Turn the PA0 potentiometer and show the sound level changing.</p>
+				</div>
+				<div class="demo-card">
+					<span>04</span>
+					<h3>Octave Control</h3>
+					<p>Turn the PA1 potentiometer and show the pitch moving lower and higher.</p>
+				</div>
+			</div>
+		</section>
+
 		<section id="results" class="section split-section reverse">
 			<div class="image-frame results-image">
 				<img src="assets/Project_Outcomes_Visual_Slide.svg" alt="Project outcomes and AD2 test results">
@@ -181,8 +229,8 @@
 				<h2>Measured with Analog Discovery 2</h2>
 				<p>
 					The project was tested by checking the speaker output pins, button press and release
-					behavior, ADC volume control, and ADC octave control. The measured values showed that
-					the expected notes were close to the target musical frequencies.
+					behavior, ADC volume control, and ADC octave control. The measured values show that
+					the generated tones closely match the expected musical frequencies.
 				</p>
 				<div class="result-list">
 					<div><strong>Frequency</strong><span>Chord outputs verified on PA5, PA6, and PA7.</span></div>
@@ -192,10 +240,11 @@
 			</div>
 		</section>
 
-		<section id="code" class="section">
+		<section id="documents" class="section">
 			<div class="section-heading">
-				<p class="eyebrow">Code Structure</p>
-				<h2>Multi-file C project</h2>
+				<p class="eyebrow">Project Files</p>
+				<h2>Code structure and supporting documents</h2>
+				<p>The firmware is organized as a multi-file C project following the course style.</p>
 			</div>
 
 			<div class="module-grid">
