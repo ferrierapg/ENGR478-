@@ -1,0 +1,313 @@
+STM32 DIGITAL PIANO - OVERALL PROGRAM LOGIC
+===========================================
+
+Project hardware
+----------------
+PA5  -> speaker output 1
+PA6  -> speaker output 2
+PA7  -> speaker output 3
+PC0  -> push button 1
+PC1  -> push button 2
+PC2  -> push button 3
+PC3  -> push button 4
+PA0  -> volume potentiometer
+PA1  -> octave potentiometer
+
+
+1. Main idea
+------------
+The project reads one push button and two potentiometers.
+
+The push button chooses the musical chord.
+The octave potentiometer changes the pitch range.
+The volume potentiometer changes the loudness.
+SysTick creates the square waves that drive the speakers.
+
+PA5, PA6, and PA7 each have their own sound timing.
+This lets the board play a three-note chord.
+
+
+2. Startup flow
+---------------
+When the board first turns on, main.c sets up the hardware.
+
+The startup order is:
+
+1. configure_LED_pin()
+   PA5, PA6, and PA7 are set as output pins.
+
+2. SysTick_Init()
+   SysTick is set to run at 20 kHz.
+   This interrupt is used for sound timing.
+
+3. __enable_irq()
+   Global interrupts are enabled.
+
+4. configure_switch_pin()
+   PC0, PC1, PC2, and PC3 are set as button inputs.
+   EXTI interrupts are enabled for button press and release.
+
+5. Stop_Tone()
+   The speaker outputs start turned off.
+
+6. ADC_Init()
+   PA0 and PA1 are set up as ADC inputs.
+
+
+3. Main loop flow
+-----------------
+After setup, the program stays inside while(1).
+
+The CPU mostly waits using:
+
+__WFI();
+
+This means "wait for interrupt."
+The CPU wakes up when an interrupt happens.
+
+The main loop does three main things:
+
+1. Reads ADC every 20 ms.
+2. Checks which button is active.
+3. Starts or stops sound.
+
+
+4. Software flowchart
+---------------------
+
+Power on
+   |
+   v
+Initialize speaker pins, SysTick, buttons, and ADC
+   |
+   v
+while(1)
+   |
+   v
+CPU waits using __WFI()
+   |
+   +--------------------------------+
+   |                                |
+   v                                v
+Button interrupt happens        SysTick interrupt happens
+button.c updates active_note    Systick_timer.c keeps making sound
+   |
+   v
+main.c wakes up
+   |
+   v
+Read ADC every 20 ms
+   |
+   v
+Check active_note
+   |
+   +-----------------------+
+   |                       |
+   v                       v
+No button pressed       Button pressed
+Stop_Tone()             get_note_frequency()
+                        Play_Tone(freq)
+                        load chord table
+                        PA5, PA6, PA7 output square waves
+
+
+5. Button logic
+---------------
+The buttons are connected to PC0 through PC3.
+
+Each button uses a pull-up resistor.
+That means:
+
+button not pressed -> input reads 1
+button pressed     -> input reads 0
+
+EXTI is used so the program does not need to constantly check the buttons.
+
+When a button changes state:
+
+1. The EXTI interrupt runs.
+2. The code checks if it was a press or release.
+3. A 50 ms debounce delay is used.
+4. active_note is updated.
+
+active_note values:
+
+-1 -> no button pressed
+ 0 -> button 1
+ 1 -> button 2
+ 2 -> button 3
+ 3 -> button 4
+
+
+6. ADC logic
+------------
+The project uses two potentiometers.
+
+PA0 is the volume potentiometer.
+PA1 is the octave potentiometer.
+
+The ADC value is from 0 to 4095.
+
+Volume:
+ADC value is converted to 0 percent through 100 percent.
+
+Octave:
+ADC value is converted to one of five octave levels.
+
+0 -> two octaves lower
+1 -> one octave lower
+2 -> normal octave
+3 -> one octave higher
+4 -> two octaves higher
+
+The ADC is read about every 20 ms.
+This keeps the knobs responsive without reading them too often.
+
+
+7. Note and chord logic
+-----------------------
+main.c starts with four base notes:
+
+button 1 -> C4
+button 2 -> D4
+button 3 -> E4
+button 4 -> G4
+
+The octave knob changes the frequency before it is sent to Play_Tone().
+
+Then Systick_timer.c uses the chord table.
+
+Chord table:
+
+SW1 / PC0 -> C major
+PA5 = C4
+PA6 = E4
+PA7 = G4
+
+SW2 / PC1 -> G major
+PA5 = G4
+PA6 = B4
+PA7 = D5
+
+SW3 / PC2 -> A minor
+PA5 = A4
+PA6 = C5
+PA7 = E5
+
+SW4 / PC3 -> F major
+PA5 = F4
+PA6 = A4
+PA7 = C5
+
+The code stores the chord as half-period values.
+A smaller half-period makes a higher frequency.
+A larger half-period makes a lower frequency.
+
+
+8. SysTick sound logic
+----------------------
+SysTick runs at 20 kHz.
+
+That means:
+20,000 interrupts happen every second.
+
+Inside SysTick_Handler(), the program updates PA5, PA6, and PA7.
+
+Each speaker output has:
+
+1. A half-period
+2. A counter
+3. A phase
+4. A volume on-time
+
+PA5 uses:
+half_1, count_1, phase_1, on_1
+
+PA6 uses:
+half_2, count_2, phase_2, on_2
+
+PA7 uses:
+half_3, count_3, phase_3, on_3
+
+The logic for each pin is:
+
+1. Count one SysTick tick.
+2. If the counter reaches the half-period, reset the counter.
+3. Toggle the phase.
+4. If the phase is high and volume allows it, set the pin high.
+5. Otherwise set the pin low.
+
+This makes a square wave.
+
+Because PA5, PA6, and PA7 each have separate counters,
+they can play different frequencies at the same time.
+
+
+9. Volume logic
+---------------
+Volume is controlled by changing how long the output stays high.
+
+At high volume:
+The pin stays high for more of the high phase.
+
+At low volume:
+The pin stays high for less of the high phase.
+
+At zero volume:
+The on-time becomes zero and the sound goes away.
+
+The code keeps a very small nonzero on-time when the volume is above zero.
+This helps the sound come back when the knob is turned up again.
+
+
+10. Why direct GPIOA->ODR is used
+---------------------------------
+The SysTick interrupt runs very fast.
+It happens 20,000 times per second.
+
+Because of that, the code inside SysTick_Handler() must be simple.
+
+The working version writes directly to GPIOA->ODR:
+
+GPIOA->ODR |= PA5_MASK;
+GPIOA->ODR &= ~PA5_MASK;
+
+This is faster and more predictable than calling extra helper functions
+inside the interrupt.
+
+
+11. What happens during a button press
+--------------------------------------
+Example: button 1 is pressed.
+
+1. PC0 creates an EXTI interrupt.
+2. button.c sets active_note = 0.
+3. main.c sees active_note is 0.
+4. main.c checks the octave knob.
+5. main.c calculates the frequency for C.
+6. main.c calls Play_Tone(freq).
+7. Systick_timer.c loads the C major chord table.
+8. SysTick_Handler() outputs:
+   PA5 = C
+   PA6 = E
+   PA7 = G
+
+
+12. What happens during button release
+--------------------------------------
+When the button is released:
+
+1. The EXTI interrupt runs again.
+2. button.c sets active_note = -1.
+3. main.c sees that no button is pressed.
+4. main.c calls Stop_Tone().
+5. Systick_timer.c clears the speaker periods.
+6. PA5, PA6, and PA7 turn off.
+
+
+13. One-sentence explanation
+----------------------------
+The program uses EXTI to detect button changes, ADC to read octave and volume,
+main.c to decide what chord to play, and SysTick to generate three square waves
+on PA5, PA6, and PA7.
+

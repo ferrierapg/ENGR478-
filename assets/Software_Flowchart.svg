@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="980" viewBox="0 0 1400 980">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#263238"/>
+    </marker>
+    <style>
+      .title { font: 700 44px Arial, sans-serif; fill: #17202A; }
+      .sub { font: 400 20px Arial, sans-serif; fill: #5B6670; }
+      .boxText { font: 700 22px Arial, sans-serif; fill: #17202A; }
+      .smallText { font: 400 18px Arial, sans-serif; fill: #17202A; }
+      .noteText { font: 700 18px Arial, sans-serif; fill: #1D5F8F; }
+      .box { stroke: #263238; stroke-width: 2; rx: 18; ry: 18; }
+      .line { stroke: #263238; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .thin { stroke: #6C7780; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="980" fill="#F7F4EC"/>
+  <text x="60" y="70" class="title">Digital Piano Software Flowchart</text>
+  <text x="60" y="108" class="sub">Overall program flow for GPIO, EXTI, ADC, SysTick, chord selection, and speaker output</text>
+
+  <!-- main flow -->
+  <rect x="560" y="145" width="280" height="70" fill="#DDEAF2" class="box"/>
+  <text x="700" y="188" text-anchor="middle" class="boxText">Power On / Reset</text>
+
+  <path d="M700 215 L700 255" class="line"/>
+
+  <rect x="500" y="255" width="400" height="105" fill="#FFFFFF" class="box"/>
+  <text x="700" y="295" text-anchor="middle" class="boxText">Initialize Hardware</text>
+  <text x="700" y="325" text-anchor="middle" class="smallText">PA5-PA7 outputs, PC0-PC3 EXTI</text>
+  <text x="700" y="350" text-anchor="middle" class="smallText">ADC for PA0/PA1, SysTick 20 kHz</text>
+
+  <path d="M700 360 L700 405" class="line"/>
+
+  <rect x="555" y="405" width="290" height="85" fill="#E0EDE5" class="box"/>
+  <text x="700" y="440" text-anchor="middle" class="boxText">Main Loop</text>
+  <text x="700" y="468" text-anchor="middle" class="smallText">CPU waits using __WFI()</text>
+
+  <!-- interrupt side boxes -->
+  <rect x="70" y="235" width="320" height="110" fill="#E0EDE5" class="box"/>
+  <text x="230" y="275" text-anchor="middle" class="boxText">Button EXTI Interrupt</text>
+  <text x="230" y="305" text-anchor="middle" class="smallText">PC0-PC3 press/release</text>
+  <text x="230" y="330" text-anchor="middle" class="smallText">updates active_note</text>
+
+  <rect x="1010" y="235" width="320" height="110" fill="#DDEAF2" class="box"/>
+  <text x="1170" y="275" text-anchor="middle" class="boxText">SysTick Interrupt</text>
+  <text x="1170" y="305" text-anchor="middle" class="smallText">runs 20,000 times/sec</text>
+  <text x="1170" y="330" text-anchor="middle" class="smallText">updates speaker waveforms</text>
+
+  <path d="M390 290 L500 420" class="thin"/>
+  <path d="M1010 290 L845 448" class="thin"/>
+
+  <!-- ADC and decision -->
+  <path d="M700 490 L700 535" class="line"/>
+
+  <rect x="490" y="535" width="420" height="95" fill="#F0E3C7" class="box"/>
+  <text x="700" y="570" text-anchor="middle" class="boxText">Read ADC Every 20 ms</text>
+  <text x="700" y="600" text-anchor="middle" class="smallText">PA0 = volume, PA1 = octave</text>
+  <text x="700" y="622" text-anchor="middle" class="smallText">average samples for smoother knobs</text>
+
+  <path d="M700 630 L700 675" class="line"/>
+
+  <rect x="520" y="675" width="360" height="85" fill="#FFFFFF" class="box"/>
+  <text x="700" y="708" text-anchor="middle" class="boxText">Check Active Button</text>
+  <text x="700" y="736" text-anchor="middle" class="smallText">Get_Active_Note()</text>
+
+  <path d="M520 718 L350 718" class="line"/>
+  <rect x="110" y="670" width="240" height="95" fill="#EAD9D6" class="box"/>
+  <text x="230" y="708" text-anchor="middle" class="boxText">No Button</text>
+  <text x="230" y="738" text-anchor="middle" class="smallText">Stop_Tone()</text>
+
+  <path d="M880 718 L1050 718" class="line"/>
+  <rect x="1050" y="660" width="270" height="115" fill="#DDEAF2" class="box"/>
+  <text x="1185" y="695" text-anchor="middle" class="boxText">Button Pressed</text>
+  <text x="1185" y="725" text-anchor="middle" class="smallText">calculate frequency</text>
+  <text x="1185" y="750" text-anchor="middle" class="smallText">using octave knob</text>
+
+  <path d="M1185 775 L1185 825" class="line"/>
+
+  <rect x="1010" y="825" width="350" height="95" fill="#DDEAF2" class="box"/>
+  <text x="1185" y="860" text-anchor="middle" class="boxText">Play_Tone(freq)</text>
+  <text x="1185" y="890" text-anchor="middle" class="smallText">load chord table</text>
+  <text x="1185" y="912" text-anchor="middle" class="smallText">set PA5/PA6/PA7 half-periods</text>
+
+  <path d="M1010 873 L850 873" class="line"/>
+
+  <rect x="520" y="815" width="330" height="125" fill="#FFFFFF" class="box"/>
+  <text x="685" y="850" text-anchor="middle" class="boxText">SysTick Sound Engine</text>
+  <text x="685" y="880" text-anchor="middle" class="smallText">separate counters for PA5, PA6, PA7</text>
+  <text x="685" y="905" text-anchor="middle" class="smallText">volume controls high-time</text>
+  <text x="685" y="930" text-anchor="middle" class="smallText">direct GPIOA-&gt;ODR writes</text>
+
+  <path d="M520 875 L350 875" class="line"/>
+
+  <rect x="80" y="830" width="270" height="95" fill="#FFFFFF" class="box"/>
+  <text x="215" y="865" text-anchor="middle" class="boxText">Speaker Outputs</text>
+  <text x="215" y="895" text-anchor="middle" class="smallText">PA5 root, PA6 third, PA7 fifth</text>
+
+  <!-- loop back -->
+  <path d="M230 670 C230 575, 500 570, 555 462" class="thin"/>
+  <path d="M685 815 C645 700, 610 560, 650 490" class="thin"/>
+
+  <!-- notes -->
+  <rect x="70" y="130" width="420" height="60" fill="#FFFFFF" stroke="#AAB2B8" stroke-width="1.5" rx="12" ry="12"/>
+  <text x="90" y="158" class="noteText">Key idea:</text>
+  <text x="175" y="158" class="smallText">main.c makes decisions; SysTick makes sound.</text>
+  <text x="90" y="182" class="smallText">Button and SysTick behavior is interrupt-driven.</text>
+</svg>

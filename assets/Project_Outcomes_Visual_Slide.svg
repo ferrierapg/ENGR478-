@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <style>
+      .title { font: 700 50px Arial, sans-serif; fill: #17202A; }
+      .subtitle { font: 400 24px Arial, sans-serif; fill: #5B6670; }
+      .section { font: 700 24px Arial, sans-serif; fill: #17202A; }
+      .metricNum { font: 700 42px Arial, sans-serif; fill: #FFFFFF; }
+      .metricLabel { font: 700 17px Arial, sans-serif; fill: #EAF1F6; }
+      .cardTitle { font: 700 24px Arial, sans-serif; fill: #17202A; }
+      .cardBody { font: 400 20px Arial, sans-serif; fill: #263238; }
+      .small { font: 400 17px Arial, sans-serif; fill: #263238; }
+      .bold { font: 700 18px Arial, sans-serif; fill: #17202A; }
+      .tag { font: 700 15px Arial, sans-serif; fill: #FFFFFF; }
+      .box { stroke-width: 2; rx: 20; ry: 20; }
+      .line { stroke: #AAB2B8; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="900" fill="#F7F4EC"/>
+
+  <text x="70" y="82" class="title">Project Outcomes and Test Results</text>
+  <text x="72" y="122" class="subtitle">AD2 measurements verified chord output, volume control, octave control, and button release behavior.</text>
+
+  <!-- metric strip -->
+  <rect x="70" y="165" width="340" height="120" fill="#1D5F8F" rx="22" ry="22"/>
+  <text x="95" y="220" class="metricNum">3 outputs</text>
+  <text x="96" y="255" class="metricLabel">PA5, PA6, PA7 verified together</text>
+
+  <rect x="440" y="165" width="300" height="120" fill="#2C7A57" rx="22" ry="22"/>
+  <text x="465" y="220" class="metricNum">1-2%</text>
+  <text x="466" y="255" class="metricLabel">frequency error from ideal notes</text>
+
+  <rect x="770" y="165" width="330" height="120" fill="#C78A2C" rx="22" ry="22"/>
+  <text x="795" y="220" class="metricNum">5% -> 49%</text>
+  <text x="796" y="255" class="metricLabel">PosDuty changed with volume knob</text>
+
+  <rect x="1130" y="165" width="390" height="120" fill="#A9453D" rx="22" ry="22"/>
+  <text x="1155" y="220" class="metricNum">132 -> 264 -> 529 Hz</text>
+  <text x="1156" y="255" class="metricLabel">octave knob halved and doubled pitch</text>
+
+  <!-- left cards -->
+  <rect x="70" y="335" width="700" height="390" fill="#FFFFFF" stroke="#AAB2B8" class="box"/>
+  <text x="105" y="382" class="section">Experiments and Tests Conducted</text>
+
+  <rect x="105" y="420" width="300" height="120" fill="#DDEAF2" stroke="#1D5F8F" class="box"/>
+  <text x="130" y="456" class="cardTitle">Chord Frequency</text>
+  <text x="130" y="490" class="cardBody">Verified SysTick sound engine</text>
+  <text x="130" y="520" class="cardBody">and three speaker outputs.</text>
+
+  <rect x="435" y="420" width="300" height="120" fill="#E0EDE5" stroke="#2C7A57" class="box"/>
+  <text x="460" y="456" class="cardTitle">Frequency Accuracy</text>
+  <text x="460" y="490" class="cardBody">Compared measured notes</text>
+  <text x="460" y="520" class="cardBody">to ideal note frequencies.</text>
+
+  <rect x="105" y="570" width="300" height="120" fill="#F0E3C7" stroke="#C78A2C" class="box"/>
+  <text x="130" y="606" class="cardTitle">ADC Volume</text>
+  <text x="130" y="640" class="cardBody">PA0 changed duty timing</text>
+  <text x="130" y="670" class="cardBody">while frequency stayed stable.</text>
+
+  <rect x="435" y="570" width="300" height="120" fill="#EAD9D6" stroke="#A9453D" class="box"/>
+  <text x="460" y="606" class="cardTitle">ADC Octave + Buttons</text>
+  <text x="460" y="640" class="cardBody">PA1 changed pitch range;</text>
+  <text x="460" y="670" class="cardBody">EXTI started/stopped sound.</text>
+
+  <!-- right result panel -->
+  <rect x="830" y="335" width="690" height="390" fill="#FFFFFF" stroke="#AAB2B8" class="box"/>
+  <text x="865" y="382" class="section">Key AD2 Result</text>
+
+  <rect x="865" y="420" width="600" height="115" fill="#DDEAF2" stroke="#1D5F8F" class="box"/>
+  <text x="895" y="458" class="cardTitle">SW1 / C Major Chord Verified</text>
+  <text x="895" y="493" class="cardBody">PA5 = 263.94 Hz   PA6 = 334.31 Hz   PA7 = 385.73 Hz</text>
+  <text x="895" y="520" class="small">AD2 showed three simultaneous frequencies from the three speaker pins.</text>
+
+  <line x1="865" y1="575" x2="1465" y2="575" class="line"/>
+  <text x="865" y="615" class="bold">Performance metrics measured</text>
+  <text x="890" y="650" class="small">Output frequency: verifies note/chord generation</text>
+  <text x="890" y="680" class="small">Percent error: checks measured notes against ideal values</text>
+  <text x="890" y="710" class="small">PosDuty: verifies ADC-based volume control</text>
+
+  <!-- bottom constraints -->
+  <rect x="70" y="775" width="1450" height="72" fill="#23313D" rx="18" ry="18"/>
+  <text x="105" y="820" class="tag">Constraints addressed:</text>
+  <text x="295" y="820" class="tag">Safety - 100 Ohm series resistors</text>
+  <text x="610" y="820" class="tag">Cost - low-cost parts</text>
+  <text x="850" y="820" class="tag">Modularity - ADC / button / SysTick files</text>
+  <text x="1245" y="820" class="tag">Testing - AD2 verified outputs</text>
+</svg>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>STM32 Digital Piano Project</title>
+	<link rel="stylesheet" href="site.css">
+</head>
+<body>
+	<header class="topbar">
+		<a class="brand" href="#home">STM32 Digital Piano</a>
+		<nav class="nav">
+			<a href="#hardware">Hardware</a>
+			<a href="#software">Software</a>
+			<a href="#results">Results</a>
+			<a href="#code">Code</a>
+		</nav>
+	</header>
+
+	<main id="home">
+		<section class="hero">
+			<div class="hero-text">
+				<p class="eyebrow">ENGR 478 Term Project</p>
+				<h1>Four-button digital piano using the STM32 NUCLEO-L476RG</h1>
+				<p class="lead">
+					This project uses GPIO, EXTI interrupts, SysTick, and ADC to make a small embedded piano.
+					Four push buttons select chords, three speaker outputs play the sound, and two
+					potentiometers control volume and octave.
+				</p>
+				<div class="hero-actions">
+					<a class="button primary" href="#software">View Flow</a>
+					<a class="button secondary" href="docs/Digital_Piano_Code_Study_Guide.pdf">Study Guide</a>
+				</div>
+			</div>
+
+			<div class="hero-panel" aria-label="Digital piano signal preview">
+				<div class="board-title">NUCLEO-L476RG</div>
+				<div class="signal-row">
+					<span>PC0</span>
+					<div class="signal button-signal"></div>
+				</div>
+				<div class="signal-row">
+					<span>PA0</span>
+					<div class="knob-bar"><i style="width: 72%"></i></div>
+				</div>
+				<div class="signal-row">
+					<span>PA1</span>
+					<div class="knob-bar accent"><i style="width: 48%"></i></div>
+				</div>
+				<div class="speaker-lines">
+					<div><span>PA5</span><b></b></div>
+					<div><span>PA6</span><b></b></div>
+					<div><span>PA7</span><b></b></div>
+				</div>
+			</div>
+		</section>
+
+		<section class="summary-strip">
+			<div>
+				<strong>4</strong>
+				<span>push buttons</span>
+			</div>
+			<div>
+				<strong>3</strong>
+				<span>speaker outputs</span>
+			</div>
+			<div>
+				<strong>2</strong>
+				<span>ADC knobs</span>
+			</div>
+			<div>
+				<strong>20 kHz</strong>
+				<span>SysTick timing</span>
+			</div>
+		</section>
+
+		<section id="hardware" class="section">
+			<div class="section-heading">
+				<p class="eyebrow">Hardware Setup</p>
+				<h2>Inputs and outputs used by the piano</h2>
+			</div>
+
+			<div class="hardware-grid">
+				<div class="hardware-card">
+					<h3>Push Buttons</h3>
+					<p>PC0, PC1, PC2, and PC3 are configured as inputs with pull-up resistors. Pressing a button creates an EXTI interrupt.</p>
+				</div>
+				<div class="hardware-card">
+					<h3>Speaker Outputs</h3>
+					<p>PA5, PA6, and PA7 are GPIO outputs. The SysTick handler changes these pins to create the sound waveform.</p>
+				</div>
+				<div class="hardware-card">
+					<h3>Volume Knob</h3>
+					<p>PA0 is an ADC input connected to a 10 kOhm potentiometer. It controls the duty time of the sound output.</p>
+				</div>
+				<div class="hardware-card">
+					<h3>Octave Knob</h3>
+					<p>PA1 is an ADC input connected to a 10 kOhm potentiometer. It moves the selected note lower or higher.</p>
+				</div>
+			</div>
+
+			<div class="pin-table">
+				<table>
+					<thead>
+						<tr>
+							<th>Pin</th>
+							<th>Direction</th>
+							<th>Project Use</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>PA5</td><td>Output</td><td>Speaker output 1</td></tr>
+						<tr><td>PA6</td><td>Output</td><td>Speaker output 2</td></tr>
+						<tr><td>PA7</td><td>Output</td><td>Speaker output 3</td></tr>
+						<tr><td>PC0-PC3</td><td>Input</td><td>Push buttons through EXTI</td></tr>
+						<tr><td>PA0</td><td>Analog input</td><td>Volume potentiometer</td></tr>
+						<tr><td>PA1</td><td>Analog input</td><td>Octave potentiometer</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section id="software" class="section split-section">
+			<div class="section-text">
+				<p class="eyebrow">Software Flow</p>
+				<h2>How the code runs</h2>
+				<p>
+					The program initializes GPIO, SysTick, EXTI, and ADC. After setup, the main loop sleeps
+					with <code>__WFI()</code> and wakes when an interrupt happens. Button interrupts select
+					the active note. The main loop reads the two ADC knobs every 20 ms. SysTick creates the
+					sound timing at 20 kHz.
+				</p>
+				<ul class="check-list">
+					<li>EXTI handles button press and release.</li>
+					<li>ADC reads volume and octave.</li>
+					<li>SysTick creates the speaker waveform.</li>
+					<li>The main loop connects the modules together.</li>
+				</ul>
+			</div>
+			<div class="image-frame">
+				<img src="assets/Software_Flowchart.svg" alt="Software flowchart for the STM32 digital piano">
+			</div>
+		</section>
+
+		<section class="section">
+			<div class="section-heading">
+				<p class="eyebrow">Chord Table</p>
+				<h2>Each button selects a three-note chord</h2>
+			</div>
+
+			<div class="chord-grid">
+				<div class="chord-card">
+					<span>SW1 / PC0</span>
+					<h3>C Major</h3>
+					<p>C - E - G</p>
+				</div>
+				<div class="chord-card">
+					<span>SW2 / PC1</span>
+					<h3>G Major</h3>
+					<p>G - B - D</p>
+				</div>
+				<div class="chord-card">
+					<span>SW3 / PC2</span>
+					<h3>A Minor</h3>
+					<p>A - C - E</p>
+				</div>
+				<div class="chord-card">
+					<span>SW4 / PC3</span>
+					<h3>F Major</h3>
+					<p>F - A - C</p>
+				</div>
+			</div>
+		</section>
+
+		<section id="results" class="section split-section reverse">
+			<div class="image-frame results-image">
+				<img src="assets/Project_Outcomes_Visual_Slide.svg" alt="Project outcomes and AD2 test results">
+			</div>
+			<div class="section-text">
+				<p class="eyebrow">Testing</p>
+				<h2>Measured with Analog Discovery 2</h2>
+				<p>
+					The project was tested by checking the speaker output pins, button press and release
+					behavior, ADC volume control, and ADC octave control. The measured values showed that
+					the expected notes were close to the target musical frequencies.
+				</p>
+				<div class="result-list">
+					<div><strong>Frequency</strong><span>Chord outputs verified on PA5, PA6, and PA7.</span></div>
+					<div><strong>Volume</strong><span>Duty timing changes when the PA0 knob moves.</span></div>
+					<div><strong>Octave</strong><span>PA1 changes the selected note lower or higher.</span></div>
+				</div>
+			</div>
+		</section>
+
+		<section id="code" class="section">
+			<div class="section-heading">
+				<p class="eyebrow">Code Structure</p>
+				<h2>Multi-file C project</h2>
+			</div>
+
+			<div class="module-grid">
+				<div class="module-card">
+					<h3>main.c</h3>
+					<p>Initializes the project, reads ADC updates, checks the active button, and calls the sound functions.</p>
+				</div>
+				<div class="module-card">
+					<h3>button.c</h3>
+					<p>Configures PC0-PC3 as EXTI inputs and handles software debounce for button changes.</p>
+				</div>
+				<div class="module-card">
+					<h3>Systick_timer.c</h3>
+					<p>Runs the sound engine, applies the chord table, controls volume, and updates milliseconds.</p>
+				</div>
+				<div class="module-card">
+					<h3>ADC.c</h3>
+					<p>Reads PA0 and PA1, averages ADC samples, and converts knob values into volume and octave settings.</p>
+				</div>
+			</div>
+
+			<div class="download-row">
+				<a href="docs/Digital_Piano_Final_Presentation.pptx">Presentation</a>
+				<a href="docs/Digital_Piano_Code_Study_Guide.pdf">Code Study Guide</a>
+				<a href="docs/Digital_Piano_Overall_Logic.txt">Program Logic Notes</a>
+				<a href="docs/Software_Flowchart.html">Flowchart Page</a>
+			</div>
+		</section>
+	</main>
+
+	<footer class="footer">
+		<p>ENGR 478 Digital Piano Project | STM32L476RG | GPIO, EXTI, SysTick, ADC</p>
+	</footer>
+</body>
+</html>
