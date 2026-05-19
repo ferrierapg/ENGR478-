@@ -99,7 +99,6 @@ code {
 
 .nav a:focus-visible,
 .button:focus-visible,
-.download-row a:focus-visible,
 .inline-link:focus-visible {
 	outline: 3px solid rgba(35, 100, 170, 0.28);
 	outline-offset: 3px;
@@ -209,7 +208,6 @@ h3 {
 }
 
 .button:hover,
-.download-row a:hover,
 .inline-link:hover {
 	transform: translateY(-1px);
 }
@@ -353,6 +351,10 @@ h3 {
 .section-heading {
 	max-width: 760px;
 	margin-bottom: 28px;
+}
+
+.compact-heading {
+	margin-top: 46px;
 }
 
 .section-heading p:last-child {
@@ -568,29 +570,45 @@ tr:last-child td {
 	color: var(--muted);
 }
 
-.module-grid {
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.download-row {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
-	margin-top: 28px;
-}
-
-.download-row a {
-	padding: 12px 14px;
+.measurement-table {
+	overflow: auto;
 	border: 1px solid var(--line);
-	border-radius: 7px;
+	border-radius: 8px;
 	background: #ffffff;
+	box-shadow: 0 1px 0 rgba(28, 45, 66, 0.04);
+}
+
+.measurement-table td:first-child {
 	color: var(--blue);
 	font-weight: 700;
-	transition: transform 160ms ease, border-color 160ms ease;
 }
 
-.download-row a:hover {
-	border-color: var(--blue);
+.result-summary {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+	margin-top: 20px;
+}
+
+.result-summary div {
+	padding: 18px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: #ffffff;
+}
+
+.result-summary strong {
+	display: block;
+	margin-bottom: 6px;
+	color: var(--navy);
+}
+
+.result-summary span {
+	color: var(--muted);
+}
+
+.module-grid {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .footer {
@@ -617,7 +635,8 @@ tr:last-child td {
 
 	.hardware-grid,
 	.chord-grid,
-	.demo-grid {
+	.demo-grid,
+	.result-summary {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
@@ -662,6 +681,7 @@ tr:last-child td {
 	.chord-grid,
 	.module-grid,
 	.demo-grid,
+	.result-summary,
 	.summary-strip {
 		grid-template-columns: 1fr;
 	}
@@ -682,8 +702,7 @@ tr:last-child td {
 
 @media print {
 	.topbar,
-	.hero-actions,
-	.download-row {
+	.hero-actions {
 		display: none;
 	}
 

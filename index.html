@@ -240,6 +240,109 @@
 			</div>
 		</section>
 
+		<section class="section">
+			<div class="section-heading">
+				<p class="eyebrow">AD2 Volume Readings</p>
+				<h2>Volume changes while pitch stays stable</h2>
+				<p>
+					These measurements were taken while playing the SW1 C major chord. The frequencies stay
+					nearly constant while the positive duty cycle decreases, which shows that PA0 changes
+					loudness without changing the note pitch.
+				</p>
+			</div>
+
+			<div class="measurement-table">
+				<table>
+					<thead>
+						<tr>
+							<th>Volume Setting</th>
+							<th>PA5 Frequency / Duty</th>
+							<th>PA6 Frequency / Duty</th>
+							<th>PA7 Frequency / Duty</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>High</td>
+							<td>263.85 Hz / 48.582%</td>
+							<td>334.45 Hz / 48.188%</td>
+							<td>385.85 Hz / 48.006%</td>
+						</tr>
+						<tr>
+							<td>Medium</td>
+							<td>263.85 Hz / 26.253%</td>
+							<td>334.36 Hz / 26.525%</td>
+							<td>385.73 Hz / 26.840%</td>
+						</tr>
+						<tr>
+							<td>Low</td>
+							<td>264.03 Hz / 1.254%</td>
+							<td>334.45 Hz / 1.589%</td>
+							<td>385.73 Hz / 1.736%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="result-summary">
+				<div>
+					<strong>C Major Verified</strong>
+					<span>PA5, PA6, and PA7 measured C, E, and G chord tones.</span>
+				</div>
+				<div>
+					<strong>Pitch Stable</strong>
+					<span>The frequency values stayed almost unchanged as the volume knob moved.</span>
+				</div>
+				<div>
+					<strong>Volume Verified</strong>
+					<span>Duty cycle changed from about 48% to about 1%, showing visible loudness control.</span>
+				</div>
+			</div>
+
+			<div class="section-heading compact-heading">
+				<p class="eyebrow">AD2 Octave Readings</p>
+				<h2>Octave knob shifts the chord frequency</h2>
+				<p>
+					These measurements show the PA1 octave potentiometer moving the same SW1 C major chord
+					down, back to normal, and up. Each octave step approximately doubles or halves the
+					frequency.
+				</p>
+			</div>
+
+			<div class="measurement-table">
+				<table>
+					<thead>
+						<tr>
+							<th>Octave Setting</th>
+							<th>PA5</th>
+							<th>PA6</th>
+							<th>PA7</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Lower Octave</td>
+							<td>132.06 Hz</td>
+							<td>167.29 Hz</td>
+							<td>193.05 Hz</td>
+						</tr>
+						<tr>
+							<td>Middle Octave</td>
+							<td>264.29 Hz</td>
+							<td>334.54 Hz</td>
+							<td>386.10 Hz</td>
+						</tr>
+						<tr>
+							<td>Higher Octave</td>
+							<td>528.54 Hz</td>
+							<td>669.27 Hz</td>
+							<td>772.63 Hz</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
 		<section id="documents" class="section">
 			<div class="section-heading">
 				<p class="eyebrow">Project Files</p>
@@ -266,12 +369,6 @@
 				</div>
 			</div>
 
-			<div class="download-row">
-				<a href="docs/Digital_Piano_Final_Presentation.pptx">Presentation</a>
-				<a href="docs/Digital_Piano_Code_Study_Guide.pdf">Code Study Guide</a>
-				<a href="docs/Digital_Piano_Overall_Logic.txt">Program Logic Notes</a>
-				<a href="docs/Software_Flowchart.html">Flowchart Page</a>
-			</div>
 		</section>
 	</main>
 
