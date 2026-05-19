@@ -202,11 +202,6 @@ h3 {
 	background: var(--blue);
 }
 
-.button.secondary {
-	border: 1px solid var(--line);
-	background: #ffffff;
-}
-
 .button:hover,
 .inline-link:hover {
 	transform: translateY(-1px);

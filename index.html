@@ -20,7 +20,7 @@
 			<a href="#software">Software</a>
 			<a href="#demo">Demo</a>
 			<a href="#results">Results</a>
-			<a href="#documents">Documents</a>
+			<a href="#firmware">Firmware</a>
 		</nav>
 	</header>
 
@@ -41,8 +41,7 @@
 					<span>No HAL</span>
 				</div>
 				<div class="hero-actions">
-					<a class="button primary" href="#software">Explore Software</a>
-					<a class="button secondary" href="docs/Digital_Piano_Code_Study_Guide.pdf">Download Study Guide</a>
+					<a class="button primary" href="#software">View Software Flow</a>
 				</div>
 			</div>
 
@@ -151,7 +150,7 @@
 					<li>SysTick interrupt drives PA5, PA6, and PA7.</li>
 					<li>Shared variables connect the modules without using HAL.</li>
 				</ul>
-				<a class="inline-link" href="docs/Software_Flowchart.html">Open full flowchart</a>
+				<a class="inline-link" href="docs/Software_Flowchart.html">View detailed flowchart</a>
 			</div>
 			<div class="image-frame">
 				<img src="assets/Software_Flowchart.svg" alt="Software flowchart for the STM32 digital piano">
@@ -343,29 +342,29 @@
 			</div>
 		</section>
 
-		<section id="documents" class="section">
+		<section id="firmware" class="section">
 			<div class="section-heading">
-				<p class="eyebrow">Project Files</p>
-				<h2>Code structure and supporting documents</h2>
-				<p>The firmware is organized as a multi-file C project following the course style.</p>
+				<p class="eyebrow">Firmware</p>
+				<h2>How the code is organized</h2>
+				<p>The project is split into small C files so each peripheral has a clear job and the full program is easy to explain.</p>
 			</div>
 
 			<div class="module-grid">
 				<div class="module-card">
 					<h3>main.c</h3>
-					<p>Initializes the project, reads ADC updates, checks the active button, and calls the sound functions.</p>
+					<p>Starts the board setup, reads the two ADC knobs, checks the active button, and calls the sound functions.</p>
 				</div>
 				<div class="module-card">
 					<h3>button.c</h3>
-					<p>Configures PC0-PC3 as EXTI inputs and handles software debounce for button changes.</p>
+					<p>Sets PC0-PC3 as button inputs, uses EXTI interrupts, and debounces button press and release changes.</p>
 				</div>
 				<div class="module-card">
 					<h3>Systick_timer.c</h3>
-					<p>Runs the sound engine, applies the chord table, controls volume, and updates milliseconds.</p>
+					<p>Runs the 20 kHz sound timing, loads chord frequencies, changes volume duty time, and counts milliseconds.</p>
 				</div>
 				<div class="module-card">
 					<h3>ADC.c</h3>
-					<p>Reads PA0 and PA1, averages ADC samples, and converts knob values into volume and octave settings.</p>
+					<p>Reads PA0 and PA1, smooths the knob values, and converts them into volume and octave settings.</p>
 				</div>
 			</div>
 
