@@ -364,7 +364,8 @@ h3 {
 
 .hardware-grid,
 .chord-grid,
-.module-grid {
+.module-grid,
+.design-grid {
 	display: grid;
 	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 16px;
@@ -373,7 +374,8 @@ h3 {
 .hardware-card,
 .chord-card,
 .module-card,
-.demo-card {
+.demo-card,
+.design-card {
 	min-height: 150px;
 	padding: 20px;
 	border: 1px solid var(--line);
@@ -384,9 +386,40 @@ h3 {
 
 .hardware-card p,
 .module-card p,
-.demo-card p {
+.demo-card p,
+.design-card p {
 	margin-bottom: 0;
 	color: var(--muted);
+}
+
+.design-card {
+	border-top: 5px solid var(--green);
+}
+
+.design-card:nth-child(2) {
+	border-top-color: var(--blue);
+}
+
+.design-card:nth-child(3) {
+	border-top-color: var(--gold);
+}
+
+.design-card:nth-child(4) {
+	border-top-color: var(--red);
+}
+
+.design-card span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	margin-bottom: 16px;
+	border-radius: 50%;
+	color: #ffffff;
+	background: var(--navy);
+	font-size: 0.9rem;
+	font-weight: 700;
 }
 
 .pin-table {
@@ -666,7 +699,8 @@ tr:last-child td {
 	.hardware-grid,
 	.chord-grid,
 	.demo-grid,
-	.result-summary {
+	.result-summary,
+	.design-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
@@ -712,6 +746,7 @@ tr:last-child td {
 	.module-grid,
 	.demo-grid,
 	.result-summary,
+	.design-grid,
 	.summary-strip {
 		grid-template-columns: 1fr;
 	}

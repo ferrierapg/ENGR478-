@@ -38,7 +38,7 @@
 					<span>EXTI</span>
 					<span>SysTick</span>
 					<span>ADC</span>
-					<span>No HAL</span>
+					<span>AD2 Tested</span>
 				</div>
 				<div class="hero-actions">
 					<a class="button primary" href="#software">View Software Flow</a>
@@ -149,12 +149,46 @@
 					<li>Main loop reads ADC values every 20 ms.</li>
 					<li>EXTI interrupt updates the active button state.</li>
 					<li>SysTick interrupt drives PA5, PA6, and PA7.</li>
-					<li>Shared variables connect the modules without using HAL.</li>
+					<li>Shared variables connect the button, ADC, and sound modules.</li>
 				</ul>
 				<a class="inline-link" href="docs/Software_Flowchart.html">View detailed flowchart</a>
 			</div>
 			<div class="image-frame">
 				<img src="assets/Software_Flowchart.svg" alt="Software flowchart for the STM32 digital piano">
+			</div>
+		</section>
+
+		<section class="section">
+			<div class="section-heading">
+				<p class="eyebrow">Design and Implementation</p>
+				<h2>How the project was put together</h2>
+				<p>
+					The design was split into small parts so the project could be built, tested, and explained one step at a time.
+					The buttons choose the chord, the ADC knobs adjust the sound, and SysTick creates the speaker waveforms.
+				</p>
+			</div>
+
+			<div class="design-grid">
+				<div class="design-card">
+					<span>01</span>
+					<h3>Input Design</h3>
+					<p>PC0-PC3 are button inputs. A released button reads HIGH and a pressed button reads LOW, so the EXTI interrupt can detect a press or release.</p>
+				</div>
+				<div class="design-card">
+					<span>02</span>
+					<h3>Control Design</h3>
+					<p>The main loop wakes up, reads the two potentiometers every 20 ms, checks the active button, and sends the selected chord to the sound code.</p>
+				</div>
+				<div class="design-card">
+					<span>03</span>
+					<h3>Sound Design</h3>
+					<p>SysTick runs at 20 kHz. Each speaker output has a counter, and the counter decides when PA5, PA6, or PA7 should change state.</p>
+				</div>
+				<div class="design-card">
+					<span>04</span>
+					<h3>Test Design</h3>
+					<p>Analog Discovery 2 was used to check frequency, positive duty cycle, octave change, and button release behavior on the real output pins.</p>
+				</div>
 			</div>
 		</section>
 
@@ -260,12 +294,79 @@
 
 		<section class="section">
 			<div class="section-heading">
-				<p class="eyebrow">AD2 Volume Readings</p>
-				<h2>Volume changes while pitch stays stable</h2>
+				<p class="eyebrow">AD2 Frequency Validation</p>
+				<h2>Each button produced its own chord</h2>
 				<p>
-					These measurements were taken while playing the SW1 C major chord. The frequencies stay
-					nearly constant while the positive duty cycle decreases, which shows that PA0 changes
-					loudness without changing the note pitch.
+					The speaker pins were measured with Analog Discovery 2. These readings show that each
+					push button selected a different three-note chord on PA5, PA6, and PA7.
+				</p>
+			</div>
+
+			<div class="measurement-table">
+				<table>
+					<thead>
+						<tr>
+							<th>Button</th>
+							<th>Chord</th>
+							<th>PA5</th>
+							<th>PA6</th>
+							<th>PA7</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>SW1</td>
+							<td>C major</td>
+							<td>263.85 Hz</td>
+							<td>334.36 Hz</td>
+							<td>385.60 Hz</td>
+						</tr>
+						<tr>
+							<td>SW2</td>
+							<td>G major</td>
+							<td>385.85 Hz</td>
+							<td>501.57 Hz</td>
+							<td>590.15 Hz</td>
+						</tr>
+						<tr>
+							<td>SW3</td>
+							<td>A minor</td>
+							<td>436.21 Hz</td>
+							<td>527.98 Hz</td>
+							<td>669.27 Hz</td>
+						</tr>
+						<tr>
+							<td>SW4</td>
+							<td>F major</td>
+							<td>346.02 Hz</td>
+							<td>435.85 Hz</td>
+							<td>528.05 Hz</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="result-summary">
+				<div>
+					<strong>Four Buttons</strong>
+					<span>Each button produced a different measured chord.</span>
+				</div>
+				<div>
+					<strong>Three Outputs</strong>
+					<span>PA5, PA6, and PA7 each carried one chord tone.</span>
+				</div>
+				<div>
+					<strong>AD2 Evidence</strong>
+					<span>The readings came from WaveForms frequency measurements.</span>
+				</div>
+			</div>
+
+			<div class="section-heading compact-heading">
+				<p class="eyebrow">AD2 Volume Validation</p>
+				<h2>Volume knob changes the duty cycle</h2>
+				<p>
+					The PA0 potentiometer changes the positive duty cycle of the output waveform. This
+					changes how loud the sound is while the note timing is still controlled by SysTick.
 				</p>
 			</div>
 
@@ -274,6 +375,7 @@
 					<thead>
 						<tr>
 							<th>Volume Setting</th>
+							<th>Button / Chord</th>
 							<th>PA5 Frequency / Duty</th>
 							<th>PA6 Frequency / Duty</th>
 							<th>PA7 Frequency / Duty</th>
@@ -282,48 +384,35 @@
 					<tbody>
 						<tr>
 							<td>High</td>
-							<td>263.85 Hz / 48.582%</td>
-							<td>334.45 Hz / 48.188%</td>
-							<td>385.85 Hz / 48.006%</td>
+							<td>SW3 / A minor</td>
+							<td>436.09 Hz / 49.959%</td>
+							<td>527.85 Hz / 49.961%</td>
+							<td>668.71 Hz / 49.847%</td>
 						</tr>
 						<tr>
 							<td>Medium</td>
-							<td>263.85 Hz / 26.253%</td>
-							<td>334.36 Hz / 26.525%</td>
-							<td>385.73 Hz / 26.840%</td>
+							<td>SW3 / A minor</td>
+							<td>435.97 Hz / 23.760%</td>
+							<td>527.98 Hz / 23.416%</td>
+							<td>669.09 Hz / 23.000%</td>
 						</tr>
 						<tr>
 							<td>Low</td>
-							<td>264.03 Hz / 1.254%</td>
-							<td>334.45 Hz / 1.589%</td>
-							<td>385.73 Hz / 1.736%</td>
+							<td>C major capture</td>
+							<td>263.94 Hz / 1.2207%</td>
+							<td>334.36 Hz / 1.5603%</td>
+							<td>385.85 Hz / 1.7686%</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 
-			<div class="result-summary">
-				<div>
-					<strong>C Major Verified</strong>
-					<span>PA5, PA6, and PA7 measured C, E, and G chord tones.</span>
-				</div>
-				<div>
-					<strong>Pitch Stable</strong>
-					<span>The frequency values stayed almost unchanged as the volume knob moved.</span>
-				</div>
-				<div>
-					<strong>Volume Verified</strong>
-					<span>Duty cycle changed from about 48% to about 1%, showing visible loudness control.</span>
-				</div>
-			</div>
-
 			<div class="section-heading compact-heading">
-				<p class="eyebrow">AD2 Octave Readings</p>
+				<p class="eyebrow">AD2 Octave Validation</p>
 				<h2>Octave knob shifts the chord frequency</h2>
 				<p>
-					These measurements show the PA1 octave potentiometer moving the same SW1 C major chord
-					down, back to normal, and up. Each octave step approximately doubles or halves the
-					frequency.
+					The PA1 potentiometer changes the selected octave. The readings show the same chord
+					moving lower and higher as the knob position changes.
 				</p>
 			</div>
 
@@ -340,21 +429,27 @@
 					<tbody>
 						<tr>
 							<td>Lower Octave</td>
-							<td>132.06 Hz</td>
-							<td>167.29 Hz</td>
-							<td>193.05 Hz</td>
+							<td>131.97 Hz</td>
+							<td>167.15 Hz</td>
+							<td>193.14 Hz</td>
 						</tr>
 						<tr>
 							<td>Middle Octave</td>
-							<td>264.29 Hz</td>
-							<td>334.54 Hz</td>
-							<td>386.10 Hz</td>
+							<td>263.94 Hz</td>
+							<td>334.26 Hz</td>
+							<td>385.85 Hz</td>
 						</tr>
 						<tr>
 							<td>Higher Octave</td>
-							<td>528.54 Hz</td>
-							<td>669.27 Hz</td>
-							<td>772.63 Hz</td>
+							<td>527.57 Hz</td>
+							<td>667.97 Hz</td>
+							<td>770.50 Hz</td>
+						</tr>
+						<tr>
+							<td>Highest Octave</td>
+							<td>1.0022 kHz</td>
+							<td>1.2530 kHz</td>
+							<td>1.4317 kHz</td>
 						</tr>
 					</tbody>
 				</table>
